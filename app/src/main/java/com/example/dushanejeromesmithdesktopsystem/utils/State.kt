@@ -6,17 +6,17 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
 import java.util.concurrent.CopyOnWriteArrayList
 
-class State<T>(@Volatile private var rawValue: T) : IBitState<T>, LifecycleObserver {
+class State<T>(@Volatile private var rawString: T) : IBitState<T>, LifecycleObserver {
 
-    private val originalValue: T = rawValue
+    private val originalValue: T = rawString
     private val observers = CopyOnWriteArrayList<(T) -> Unit>()
 
-    override fun getValue(): T = rawValue
+    override fun getValue(): T = rawString
 
     override fun setValue(newValue: T) {
-        if (newValue != rawValue) {
-            rawValue = newValue
-            observers.forEach { it(rawValue) }
+        if (newValue != rawString) {
+            rawString = newValue
+            observers.forEach { it(rawString) }
         }
     }
 
@@ -27,7 +27,7 @@ class State<T>(@Volatile private var rawValue: T) : IBitState<T>, LifecycleObser
     override fun observe(lifecycleOwner: LifecycleOwner, observer: (T) -> Unit) {
         observers.add(observer)
         lifecycleOwner.lifecycle.addObserver(this)
-        observer(rawValue)
+        observer(rawString)
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
